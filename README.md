@@ -1,0 +1,2 @@
+# docnear-platform
+Docnear App
