@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Outfit, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
+import { Icon } from '@/icons';
 
 // ── Fonts ─────────────────────────────────────────────────────────────────────
 // Outfit: primary UI font — clean, modern, great for Indian healthcare apps
@@ -33,6 +34,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.docnear.in'),
   openGraph: { type: 'website', locale: 'en_IN', siteName: 'DocNear' },
   robots: { index: true, follow: true },
+  icons: './icon.svg',
 };
 
 export const viewport: Viewport = {
