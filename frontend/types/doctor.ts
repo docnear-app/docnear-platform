@@ -34,4 +34,25 @@ export interface DoctorFilterState {
   gender: string;
 }
 
+export interface Doctor {
+  id: string;
+  name: string;
+  specialty: string;
+  hospital: string;
+  location: {
+    city: string;
+    district: string;
+  };
+  employmentType: 'Full-time' | 'Part-time' | 'Contract';
+  priceMin: number;
+  priceMax: number;
+  rating: number;
+  reviewCount: number;
+  avatar: string;
+  isAvailableToday: boolean;
+  languages: string[];
+  experience: number;
+  gender: 'male' | 'female';
+}
+
 export type DoctorSortOption = 'rating' | 'price_asc' | 'price_desc' | 'experience';

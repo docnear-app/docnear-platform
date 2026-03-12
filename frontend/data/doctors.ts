@@ -1,4 +1,4 @@
-import { Doctor } from '@/types/doctor';
+import { Doctor } from '@/types';
 
 export const CITIES = [
   'All Location',
@@ -223,6 +223,23 @@ export const DUMMY_DOCTORS: Doctor[] = [
     languages: ['Indonesian', 'English'],
     experience: 20,
     gender: 'male',
+  },
+  {
+    id: '12',
+    name: 'Dr. Maya Farida Sp.M',
+    specialty: 'Ophthalmologist',
+    hospital: 'RS Mata AINI, Kuningan',
+    location: { city: 'Jakarta', district: 'Kuningan' },
+    employmentType: 'Full-time',
+    priceMin: 250000,
+    priceMax: 350000,
+    rating: 91,
+    reviewCount: 144,
+    avatar: 'https://api.dicebear.com/9.x/personas/svg?seed=maya&backgroundColor=ffe5b4',
+    isAvailableToday: false,
+    languages: ['Indonesian'],
+    experience: 7,
+    gender: 'female',
   },
   {
     id: '12',
