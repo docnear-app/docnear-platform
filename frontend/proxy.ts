@@ -1,97 +1,71 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-// ─── Route config ─────────────────────────────────────────────────────────────
-// PUBLIC  → no auth needed
-// PATIENT → requires any authenticated user
-// DOCTOR  → requires role === 'doctor'
-// ADMIN   → requires role === 'admin' or 'super_admin'
+// ─── Route config ──────────────────────────────────────────────────────────────
+const PATIENT_ROUTES = ['/patient'];
+const DOCTOR_ROUTES = ['/doctor'];
+const ADMIN_ROUTES = ['/admin'];
+const AUTH_ROUTES = ['/auth', '/get-started'];
 
-const PUBLIC_PATHS = ['/', '/login', '/register', '/otp'];
+type UserRole = 'patient' | 'doctor' | 'admin' | 'super_admin';
 
-const DOCTOR_PREFIX = '/doctor';
-const ADMIN_PREFIX = '/admin';
+function getRole(request: NextRequest): UserRole | null {
+  // Auth store sets `docnear-role` cookie on login, clears on logout.
+  // Middleware can't access localStorage — this cookie is the bridge.
+  const role = request.cookies.get('docnear-role')?.value;
+  return role ? (role as UserRole) : null;
+}
 
-// ─── Token helpers ────────────────────────────────────────────────────────────
-
-function getAuthCookie(req: NextRequest) {
-  // We store a lightweight non-sensitive session hint in a cookie after login.
-  // The real JWT is kept in memory (Zustand) — this cookie only carries the role
-  // so middleware can redirect without exposing the token server-side.
-  // Cookie name: docnear-session  value: JSON { role: string, isAuthenticated: bool }
-  const raw = req.cookies.get('docnear-session')?.value;
-  if (!raw) return null;
-  try {
-    return JSON.parse(raw) as { role: string; isAuthenticated: boolean };
-  } catch {
-    return null;
+function getDashboardUrl(role: UserRole): string {
+  switch (role) {
+    case 'doctor':
+      return '/doctor/dashboard';
+    case 'admin':
+    case 'super_admin':
+      return '/admin/dashboard';
+    default:
+      return '/patient/dashboard';
   }
 }
 
-function isPublic(pathname: string): boolean {
-  return PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(p + '/'));
-}
+export function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  const role = getRole(request);
+  const isAuthenticated = !!role;
 
-// ─── Middleware ───────────────────────────────────────────────────────────────
-
-export function proxy(req: NextRequest) {
-  const { pathname } = req.nextUrl;
-
-  // Always allow static assets, api routes, Next internals
-  if (
-    pathname.startsWith('/_next') ||
-    pathname.startsWith('/api') ||
-    pathname.includes('.') // static files
-  ) {
+  // ── Authenticated user hitting an auth page → send to their dashboard ──────
+  if (AUTH_ROUTES.some((r) => pathname.startsWith(r))) {
+    if (isAuthenticated) {
+      return NextResponse.redirect(new URL(getDashboardUrl(role!), request.url));
+    }
     return NextResponse.next();
   }
 
-  const session = getAuthCookie(req);
-  const isAuthenticated = session?.isAuthenticated === true;
-  const role = session?.role ?? null;
-
-  // ── Not logged in ──────────────────────────────────────────────────────────
-  if (!isAuthenticated) {
-    if (isPublic(pathname)) return NextResponse.next();
-
-    // Redirect to login with a return URL
-    const loginUrl = req.nextUrl.clone();
-    loginUrl.pathname = '/login';
-    loginUrl.searchParams.set('next', pathname);
-    return NextResponse.redirect(loginUrl);
+  // ── Protect patient routes ─────────────────────────────────────────────────
+  if (PATIENT_ROUTES.some((r) => pathname.startsWith(r))) {
+    if (!isAuthenticated) return NextResponse.redirect(new URL('/auth/patient', request.url));
+    if (role !== 'patient')
+      return NextResponse.redirect(new URL(getDashboardUrl(role!), request.url));
   }
 
-  // ── Logged in — role-based guards ──────────────────────────────────────────
+  // ── Protect doctor routes ──────────────────────────────────────────────────
+  if (DOCTOR_ROUTES.some((r) => pathname.startsWith(r))) {
+    if (!isAuthenticated) return NextResponse.redirect(new URL('/auth/doctor', request.url));
+    if (role !== 'doctor')
+      return NextResponse.redirect(new URL(getDashboardUrl(role!), request.url));
+  }
 
-  // Admin routes: only admin / super_admin
-  if (pathname.startsWith(ADMIN_PREFIX)) {
+  // ── Protect admin routes ───────────────────────────────────────────────────
+  if (ADMIN_ROUTES.some((r) => pathname.startsWith(r))) {
+    if (!isAuthenticated) return NextResponse.redirect(new URL('/auth/admin', request.url));
     if (role !== 'admin' && role !== 'super_admin') {
-      const url = req.nextUrl.clone();
-      url.pathname = role === 'doctor' ? '/doctor' : '/';
-      return NextResponse.redirect(url);
+      return NextResponse.redirect(new URL(getDashboardUrl(role!), request.url));
     }
-  }
-
-  // Doctor routes: only doctor
-  if (pathname.startsWith(DOCTOR_PREFIX)) {
-    if (role !== 'doctor') {
-      const url = req.nextUrl.clone();
-      url.pathname = role === 'admin' || role === 'super_admin' ? '/admin' : '/';
-      return NextResponse.redirect(url);
-    }
-  }
-
-  // Prevent logged-in users from hitting login/register again
-  if (pathname === '/login' || pathname === '/register') {
-    const url = req.nextUrl.clone();
-    url.pathname =
-      role === 'doctor' ? '/doctor' : role === 'admin' || role === 'super_admin' ? '/admin' : '/';
-    return NextResponse.redirect(url);
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  // Run on all routes except Next.js internals
-  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
+  matcher: ['/patient/:path*', '/doctor/:path*', '/admin/:path*', '/auth/:path*', '/get-started'],
 };

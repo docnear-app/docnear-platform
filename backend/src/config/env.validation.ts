@@ -22,6 +22,7 @@ export function validateEnv(env: Env): Env {
   requireEnv(env, 'DATABASE_URL');
   requireEnv(env, 'JWT_SECRET');
   requireEnv(env, 'JWT_REFRESH_SECRET');
+  requireEnv(env, 'ADMIN_PASSWORD_HASH');
 
   parsePort(env, 'PORT', 5000);
   parsePort(env, 'REDIS_PORT', 6379);

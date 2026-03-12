@@ -15,3 +15,4 @@ export * from './notification.types';
 export * from './kyc.types';
 export * from './city.types';
 export * from './socket.types';
+export * from './doctor';

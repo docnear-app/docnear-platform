@@ -46,6 +46,11 @@ export class AppConfigService {
     return this.config.get<string>('jwt.refreshExpiresIn', '7d');
   }
 
+  // ─── Admin Auth ───────────────────────────────────────────────────────────
+  get adminPasswordHash(): string | undefined {
+    return this.config.get<string>('adminAuth.passwordHash');
+  }
+
   // ─── AWS ───────────────────────────────────────────────────────────────────
   get awsRegion(): string {
     return this.config.get<string>('aws.region', 'ap-south-1');
