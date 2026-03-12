@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { MapPin, Clock, ThumbsUp, Briefcase, Star, CalendarCheck, User } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import type { DoctorListing } from './types';
+import type { DoctorListing } from '@/types';
 
 interface DoctorCardProps {
   doctor: DoctorListing;

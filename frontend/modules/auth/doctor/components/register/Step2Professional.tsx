@@ -7,7 +7,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { FormField } from '@/components/common/auth/FormField';
 import { MultiSelectChips } from '../MultiSelectChips';
 import { ArrowLeft } from 'lucide-react';
-import type { DoctorRegisterForm } from '../hooks/use-doctor-register.hook';
+import { DoctorRegisterForm } from '../../hooks/use-doctor-register.hook';
 
 const QUALIFICATIONS = [
   'MBBS',

@@ -2,7 +2,7 @@
 
 import { ArrowUpDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { DoctorSortOption } from './types';
+import type { DoctorSortOption } from '@/types';
 
 // ─── SortBar ───────────────────────────────────────────────────────────────
 

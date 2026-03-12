@@ -1,7 +1,7 @@
 'use client';
 
 import { X } from 'lucide-react';
-import type { DoctorFilterState } from './types';
+import type { DoctorFilterState } from '@/types';
 // ─── ActiveFilters ─────────────────────────────────────────────────────────
 
 interface ActiveFiltersProps {

@@ -9,7 +9,7 @@ import { PasswordInput } from '@/components/common/auth/PasswordInput';
 import { OtpInput } from '@/components/common/auth/OtpInput';
 import { DevOtpBanner } from '@/components/common/auth/DevOtpBanner';
 import { Check, Mail, SmartphoneIcon } from 'lucide-react';
-import type { DoctorRegisterForm } from '../hooks/use-doctor-register.hook';
+import { DoctorRegisterForm } from '../../hooks/use-doctor-register.hook';
 
 interface Step1PersonalProps {
   form: DoctorRegisterForm;

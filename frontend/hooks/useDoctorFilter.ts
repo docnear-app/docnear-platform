@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
-import type { DoctorListing, DoctorFilterState, DoctorSortOption } from './types';
-import { DUMMY_DOCTORS } from '@/data/doctors';
+import type { DoctorListing, DoctorFilterState, DoctorSortOption } from '@/types';
+import { DUMMY_DOCTOR_LISTINGS } from '@/data/doctors';
 
 const INITIAL_FILTERS: DoctorFilterState = {
   search: '',
@@ -62,7 +62,7 @@ export function useDoctorFilter() {
   }, []);
 
   const filtered = useMemo<DoctorListing[]>(() => {
-    let list = [...DUMMY_DOCTORS];
+    let list = [...DUMMY_DOCTOR_LISTINGS];
 
     if (filters.search.trim()) {
       const q = filters.search.toLowerCase();

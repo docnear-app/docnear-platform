@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
-import type { DoctorListing } from './types';
+import type { DoctorListing } from '@/types';
 
 interface DoctorProfileModalProps {
   doctor: DoctorListing | null;

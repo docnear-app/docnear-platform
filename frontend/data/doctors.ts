@@ -1,4 +1,4 @@
-import { Doctor } from '@/types';
+import type { Doctor, DoctorListing } from '@/types';
 
 export const CITIES = [
   'All Location',
@@ -259,3 +259,23 @@ export const DUMMY_DOCTORS: Doctor[] = [
     gender: 'female',
   },
 ];
+
+function buildQualifications(doctor: Doctor): string[] {
+  const specialtyTitle = doctor.specialty === 'Psychologist' ? 'M.Psi' : doctor.specialty;
+
+  return [
+    specialtyTitle,
+    `${doctor.experience}+ years experience`,
+    `${doctor.employmentType} consultant`,
+  ];
+}
+
+function buildBio(doctor: Doctor): string {
+  return `${doctor.name} is a ${doctor.specialty.toLowerCase()} practicing at ${doctor.hospital} in ${doctor.location.city}. They have ${doctor.experience} years of experience and consult in ${doctor.languages.join(', ')}.`;
+}
+
+export const DUMMY_DOCTOR_LISTINGS: DoctorListing[] = DUMMY_DOCTORS.map((doctor) => ({
+  ...doctor,
+  qualifications: buildQualifications(doctor),
+  bio: buildBio(doctor),
+}));
